@@ -20,11 +20,13 @@ public class ManageScreen extends JPanel {
 
     // Text fields for other passenger attributes
     private JTextField nameField;
-    private JTextField ageField;
+    private JTextField minIdField;
+    private JTextField maxIdField;
     private JTextField sibSpField;
     private JTextField parchField;
     private JTextField ticketField;
-    private JTextField fareField;
+    private JTextField minFareField;
+    private JTextField maxFareField;
     private JTextField cabinField;
 
     public ManageScreen(int x, int y, int width, int height) {
@@ -53,7 +55,7 @@ public class ManageScreen extends JPanel {
             this.add(filterButton);
 
             // Combo box for embarked field
-            embarkedComboBox = new JComboBox<>(new String[]{"", "S", "C", "Q"});
+            embarkedComboBox = new JComboBox<>(new String[]{"All", "S", "C", "Q"});
             JLabel embarkedLabel = new JLabel("Embarked:");
             embarkedLabel.setBounds(survivedLabel.getX(), survivedLabel.getY() + survivedLabel.getHeight() + 10,
                     Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
@@ -63,7 +65,7 @@ public class ManageScreen extends JPanel {
             this.add(embarkedComboBox);
 
             // Combo box for sex field
-            sexComboBox = new JComboBox<>(new String[]{"", "male", "female"});
+            sexComboBox = new JComboBox<>(new String[]{"All", "male", "female"});
             JLabel sexLabel = new JLabel("Sex:");
             sexLabel.setBounds(survivedLabel.getX(), embarkedLabel.getY() + embarkedLabel.getHeight() + 10,
                     Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
@@ -78,12 +80,14 @@ public class ManageScreen extends JPanel {
             int textFieldWidth = Constants.LABEL_WIDTH + Constants.COMBO_BOX_WIDTH;
             int textFieldHeight = Constants.COMBO_BOX_HEIGHT;
 
+            minIdField = createTextField("ID Min:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
+            maxIdField = createTextField("ID Max:", minIdField.getX() + minIdField.getWidth() + 20, textFieldY, textFieldWidth, textFieldHeight);
             nameField = createTextField("Name:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            ageField = createTextField("Age:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
             sibSpField = createTextField("SibSp:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
             parchField = createTextField("Parch:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
             ticketField = createTextField("Ticket:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            fareField = createTextField("Fare:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
+            minFareField = createTextField("Fare Min:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
+            maxFareField = createTextField("Fare Max:", minFareField.getX() + minFareField.getWidth() + 20, textFieldY, textFieldWidth, textFieldHeight);
             cabinField = createTextField("Cabin:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
 
             passengers = new ArrayList<>();
@@ -98,8 +102,7 @@ public class ManageScreen extends JPanel {
                     passengers.add(passenger);
                 }
                 scanner.close();
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
+            } catch (FileNotFoundException ignored) {
             }
 
             filterButton.addActionListener((e) -> {
@@ -107,7 +110,7 @@ public class ManageScreen extends JPanel {
             });
 
             this.survivedComboBox.addActionListener((e) -> {
-
+//                filterPassengersAndUpdateUI();
             });
 
         }
@@ -130,39 +133,34 @@ public class ManageScreen extends JPanel {
 
         String selectedEmbarked = String.valueOf(embarkedComboBox.getSelectedItem());
         String selectedSex = String.valueOf(sexComboBox.getSelectedItem());
+        String selectedClass = String.valueOf(survivedComboBox.getSelectedItem());
+
+        int minId = parseTextFieldToInt(minIdField);
+        int maxId = parseTextFieldToInt(maxIdField);
+        double minFare = parseTextFieldToDouble(minFareField);
+        double maxFare = parseTextFieldToDouble(maxFareField);
 
         filteredPassengers.addAll(passengers.stream()
                 .filter(passenger -> matchesTextField(nameField, passenger.getName()))
-                .filter(passenger -> matchesTextField(ageField, passenger.getAge()))
+                .filter(passenger -> matchesIdRange(passenger.getPassengerId(), minId, maxId))
                 .filter(passenger -> matchesTextField(sibSpField, passenger.getSibSp()))
                 .filter(passenger -> matchesTextField(parchField, passenger.getParch()))
                 .filter(passenger -> matchesTextField(ticketField, passenger.getTicket()))
-                .filter(passenger -> matchesTextField(fareField, passenger.getFare()))
+                .filter(passenger -> matchesFareRange(passenger.getFare(), minFare, maxFare))
                 .filter(passenger -> matchesTextField(cabinField, passenger.getCabin()))
                 .filter(passenger -> matchesEmbarked(passenger, selectedEmbarked))
                 .filter(passenger -> matchesSex(passenger, selectedSex))
+                .filter(passenger -> matchesClass(passenger, selectedClass))
                 .collect(Collectors.toList()));
 
-        int count = filteredPassengers.size();
-        response.setText("Number of passengers: " + count);
-    }
+        int totalCount = filteredPassengers.size();
+        int survivedCount = (int) filteredPassengers.stream().filter(passenger -> passenger.getSurvived() == 1).count();
+        int notSurvivedCount = totalCount - survivedCount;
 
-//    private boolean isSelectedClass(Passenger passenger, String selectedClass) {
-//        if (selectedClass.equals("All")) {
-//            return true;
-//        }
-//        int pClass = passenger.getPClass();
-//        switch (selectedClass) {
-//            case "1st":
-//                return pClass == 1;
-//            case "2nd":
-//                return pClass == 2;
-//            case "3rd":
-//                return pClass == 3;
-//            default:
-//                return false;
-//        }
-//    }
+        String responseText = "Total rows: " + totalCount +
+                " (" + survivedCount + " survived, " + notSurvivedCount + " didn't survive)";
+        response.setText(responseText);
+    }
 
     private boolean matchesTextField(JTextField textField, Object value) {
         String text = textField.getText().trim();
@@ -173,8 +171,34 @@ public class ManageScreen extends JPanel {
         return String.valueOf(value).toLowerCase().contains(text.toLowerCase());
     }
 
+    private boolean matchesIdRange(int id, int minId, int maxId) {
+        if (minId == Integer.MIN_VALUE && maxId == Integer.MIN_VALUE) {
+            return true; // No filter applied if both fields are empty
+        }
+        if (minId == Integer.MIN_VALUE) {
+            return id <= maxId;
+        }
+        if (maxId == Integer.MAX_VALUE) {
+            return id >= minId;
+        }
+        return id >= minId && id <= maxId;
+    }
+
+    private boolean matchesFareRange(double fare, double minFare, double maxFare) {
+        if (Double.isNaN(minFare) && Double.isNaN(maxFare)) {
+            return true; // No filter applied if both fields are empty
+        }
+        if (Double.isNaN(minFare)) {
+            return fare <= maxFare;
+        }
+        if (Double.isNaN(maxFare)) {
+            return fare >= minFare;
+        }
+        return fare >= minFare && fare <= maxFare;
+    }
+
     private boolean matchesEmbarked(Passenger passenger, String selectedEmbarked) {
-        if (selectedEmbarked.isEmpty()) {
+        if (selectedEmbarked.isEmpty() || selectedEmbarked.equals("All")) {
             return true; // No filter applied if embarked is not selected
         }
         if (passenger.getEmbarked() != null) {
@@ -184,9 +208,55 @@ public class ManageScreen extends JPanel {
     }
 
     private boolean matchesSex(Passenger passenger, String selectedSex) {
-        if (selectedSex.isEmpty()) {
+        if (selectedSex.isEmpty() || selectedSex.equals("All")) {
             return true; // No filter applied if sex is not selected
         }
         return passenger.getSex().equalsIgnoreCase(selectedSex);
+    }
+
+    private boolean matchesClass(Passenger passenger, String selectedClass) {
+        if (selectedClass.equals("All")) {
+            return true; // No filter applied if "All" is selected
+        }
+        int pClass = passenger.getPClass();
+        switch (selectedClass) {
+            case "1st":
+                return pClass == 1;
+            case "2nd":
+                return pClass == 2;
+            case "3rd":
+                return pClass == 3;
+            default:
+                return false;
+        }
+    }
+
+    private int parseTextFieldToInt(JTextField textField) {
+        String text = textField.getText().trim();
+        if (text.isEmpty()) {
+            return Integer.MIN_VALUE; // Indicates no filter applied
+        }
+        try {
+            return Integer.parseInt(text);
+        } catch (NumberFormatException e) {
+            return Integer.MIN_VALUE; // Invalid input, treat as no filter applied
+        }
+    }
+
+    private double parseTextFieldToDouble(JTextField textField) {
+        String text = textField.getText().trim();
+        if (text.isEmpty()) {
+            return Double.NaN; // Indicates no filter applied
+        }
+        try {
+            return Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            return Double.NaN; // Invalid input, treat as no filter applied
+        }
+    }
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
     }
 }
