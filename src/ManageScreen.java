@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
@@ -177,6 +178,7 @@ public class ManageScreen extends JPanel {
     private void saveFilteredPassengersToCSV(String fileName) {
         File outputFile = new File(fileName);
         try (PrintWriter writer = new PrintWriter(outputFile)) {
+            filteredPassengers.sort(Comparator.comparing(Passenger::getFormattedName));
             // Write header
             writer.println("PassengerId,Survived,PClass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked");
 
