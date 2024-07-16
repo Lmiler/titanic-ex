@@ -16,7 +16,4 @@ class Titanic extends JFrame {
         this.setVisible(true);
 
     }
-
-
-
 }

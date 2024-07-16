@@ -1,0 +1,95 @@
+PassengerId,Survived,PClass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
+2,1,1,"John Bradley (Florence Briggs Thayer) Cumings",female,38,1,0,PC 17599,71.2833,C85,C
+4,1,1,"Jacques Heath (Lily May Peel) Futrelle",female,35,1,0,113803,53.1,C123,S
+12,1,1,"Elizabeth Bonnell",female,58,0,0,113783,26.55,C103,S
+32,1,1,"William Augustus (Marie Eugenie) Spencer",female,0,0,0,null,0.0,null,null
+53,1,1,"Henry Sleeper (Myna Haxtun) Harper",female,49,1,0,PC 17572,76.7292,D33,C
+62,1,1,"Amelie Icard",female,38,0,0,113572,80.0,B28,null
+89,1,1,"Mabel Helen Fortune",female,23,3,2,19950,263.0,C23 C25 C27,S
+137,1,1,"Helen Monypeny Newsom",female,19,0,2,11752,26.2833,D47,S
+152,1,1,"Thomas (Edith Wearne) Pears",female,22,1,0,113776,66.6,C2,S
+167,1,1,"(Edith Martha Bowerman) Chibnall",female,0,0,0,null,0.0,null,null
+178,0,1,"Ann Elizabeth Isham",female,50,0,0,PC 17595,28.7125,C49,C
+195,1,1,"James Joseph (Margaret Tobin) Brown",female,44,0,0,PC 17610,27.7208,B4,C
+196,1,1,"Elise Lurette",female,58,0,0,PC 17569,146.5208,B80,C
+216,1,1,"Madeleine Newell",female,31,1,0,35273,113.275,D36,C
+219,1,1,"Albina Bazzani",female,32,0,0,11813,76.2917,D15,C
+231,1,1,"Henry Birkhardt (Irene Wallach) Harris",female,35,1,0,36973,83.475,C83,S
+257,1,1,"Gertrude Maybelle Thorne",female,0,0,0,null,0.0,null,null
+258,1,1,"Gladys Cherry",female,30,0,0,110152,86.5,B77,S
+259,1,1,"Anna Ward",female,35,0,0,PC 17755,512.3292,,C
+269,1,1,"William Thompson (Edith Junkins) Graham",female,58,0,1,PC 17582,153.4625,C125,S
+270,1,1,"Amelia Bissette",female,35,0,0,PC 17760,135.6333,C99,S
+276,1,1,"Kornelia Theodosia Andrews",female,63,1,0,13502,77.9583,D7,S
+291,1,1,"Ellen ""Nellie"" Barber",female,26,0,0,19877,78.85,,S
+292,1,1,"Dickinson H (Helen Walton) Bishop",female,19,1,0,11967,91.0792,B49,C
+298,0,1,"Helen Loraine Allison",female,2,1,2,113781,151.55,C22 C26,S
+300,1,1,"James (Helene DeLaudeniere Chaput) Baxter",female,50,0,1,PC 17558,247.5208,B58 B60,C
+307,1,1,"Margaret Fleming",female,0,0,0,null,0.0,null,null
+308,1,1,"Victor de Satode (Maria Josefa Perez de Soto y Vallejo) Penasco",female,17,1,0,PC 17758,108.9,C65,C
+310,1,1,"Laura Mabel Francatelli",female,30,0,0,PC 17485,56.9292,E36,C
+311,1,1,"Margaret Bechstein Hays",female,24,0,0,11767,83.1583,C54,C
+312,1,1,"Emily Borie Ryerson",female,18,2,2,PC 17608,262.375,B57 B59 B63 B66,C
+319,1,1,"Mary Natalie Wick",female,31,0,2,36928,164.8667,C7,S
+320,1,1,"Frederic Oakley (Margaretta Corning Stone) Spedden",female,40,1,1,16966,134.5,E34,C
+326,1,1,"Marie Grice Young",female,36,0,0,PC 17760,135.6333,C32,C
+330,1,1,"Jean Gertrude Hippach",female,16,0,1,111361,57.9792,B18,C
+335,1,1,"Henry William (Clara Heinsheimer) Frauenthal",female,0,0,0,null,0.0,null,null
+338,1,1,"Elizabeth Margaret Burns",female,41,0,0,16966,134.5,E40,C
+342,1,1,"Alice Elizabeth Fortune",female,24,3,2,19950,263.0,C23 C25 C27,S
+357,1,1,"Elsie Edith Bowerman",female,22,0,1,113505,55.0,E33,S
+367,1,1,"Frank Manley (Anna Sophia Atkinson) Warren",female,60,1,0,110813,75.25,D37,C
+370,1,1,"Leontine Pauline Aubart",female,24,0,0,PC 17477,69.3,B35,C
+376,1,1,"Edgar Joseph (Leila Saks) Meyer",female,0,0,0,null,0.0,null,null
+381,1,1,"Rosalie Bidois",female,42,0,0,PC 17757,227.525,,C
+384,1,1,"Alexander Oskar (Mary Aline Towner) Holverson",female,35,1,0,113789,52.0,,S
+394,1,1,"Marjorie Newell",female,23,1,0,35273,113.275,D36,C
+413,1,1,"Daisy E Minahan",female,33,1,0,19928,90.0,C78,Q
+436,1,1,"Lucile Polk Carter",female,14,1,2,113760,120.0,B96 B98,S
+458,1,1,"Frederick R (Marion) Kenyon",female,0,0,0,null,0.0,null,null
+487,1,1,"Frederick Maxfield (Jane Anne Forby) Hoyt",female,35,1,0,19943,90.0,C93,S
+497,1,1,"Elizabeth Mussey Eustis",female,54,1,0,36947,78.2667,D20,C
+499,0,1,"Hudson J C (Bessie Waldo Daniels) Allison",female,25,1,2,113781,151.55,C22 C26,S
+505,1,1,"Roberta Maioni",female,16,0,0,110152,86.5,B79,S
+514,1,1,"Martin (Elizabeth L. Barrett) Rothschild",female,54,1,0,PC 17603,59.4,,C
+521,1,1,"Anne Perreault",female,30,0,0,12749,93.5,B73,S
+524,1,1,"Louis Albert (Ida Sophia Fischer) Hippach",female,44,0,1,111361,57.9792,B18,C
+538,1,1,"Bertha LeRoy",female,30,0,0,PC 17761,106.425,,C
+540,1,1,"Hedwig Margaritha Frolicher",female,22,0,2,13568,49.5,B39,C
+541,1,1,"Harriet R Crosby",female,36,0,2,WE/P 5735,71.0,B22,S
+557,1,1,"(Lucille Christiana Sutherland) (""Mrs Morgan"") Duff",female,48,1,0,11755,39.6,A16,C
+559,1,1,"Emil (Tillie Mandelbaum) Taussig",female,39,1,1,110413,79.65,E67,S
+572,1,1,"Edward Dale (Charlotte Lamson) Appleton",female,53,2,0,11769,51.4792,C101,S
+578,1,1,"William Baird (Alice Munger) Silvey",female,39,1,0,13507,55.9,E44,S
+582,1,1,"John Borland (Marian Longstreth Morris) Thayer",female,39,1,1,17421,110.8833,C68,C
+586,1,1,"Ruth Taussig",female,18,0,2,110413,79.65,E68,S
+592,1,1,"Walter Bertram (Martha Eustis) Stephenson",female,52,1,0,36947,78.2667,D20,C
+610,1,1,"Elizabeth W Shutes",female,40,0,0,PC 17582,153.4625,C125,S
+628,1,1,"Gretchen Fiske Longley",female,21,0,0,13502,77.9583,D9,S
+642,1,1,"Emma Sagesser",female,24,0,0,PC 17477,69.3,B35,C
+670,1,1,"Elmer Zebley (Juliet Cummins Wright) Taylor",female,0,0,0,null,0.0,null,null
+690,1,1,"Georgette Alexandra Madill",female,15,0,1,24160,211.3375,B5,S
+701,1,1,"John Jacob (Madeleine Talmadge Force) Astor",female,18,1,0,PC 17757,227.525,C62 C64,C
+709,1,1,"Alice Cleaver",female,22,0,0,113781,151.55,,S
+711,1,1,"Berthe Antonine (""Mrs de Villiers"") Mayne",female,24,0,0,PC 17482,49.5042,C90,C
+717,1,1,"Caroline Louise Endres",female,38,0,0,PC 17757,227.525,C45,C
+731,1,1,"Elisabeth Walton Allen",female,29,0,0,24160,211.3375,B5,S
+743,1,1,"Susan Parker ""Suzette"" Ryerson",female,21,2,2,PC 17608,262.375,B57 B59 B63 B66,C
+760,1,1,"of (Lucy Noel Martha Dyer-Edwards) Rothes",female,33,0,0,110152,86.5,B77,S
+764,1,1,"William Ernest (Lucile Polk) Carter",female,36,1,2,113760,120.0,B96 B98,S
+766,1,1,"John C (Anna Andrews) Hogeboom",female,51,1,0,13502,77.9583,D11,S
+780,1,1,"Edward Scott (Elisabeth Walton McMillan) Robert",female,43,0,1,24160,211.3375,B3,S
+782,1,1,"Albert Adrian (Vera Gillespie) Dick",female,17,1,0,17474,57.0,B20,S
+797,1,1,"Alice (Farnham) Leader",female,49,0,0,17465,25.9292,D17,S
+810,1,1,"Norman Campbell (Bertha Griggs) Chambers",female,33,1,0,113806,53.1,E8,S
+821,1,1,"Charles Melville (Clara Jennings Gregg) Hays",female,52,1,1,12749,93.5,B69,S
+830,1,1,"George Nelson (Martha Evelyn) Stone",female,62,0,0,113572,80.0,B28,null
+836,1,1,"Sara Rebecca Compton",female,39,1,1,PC 17756,83.1583,E49,C
+843,1,1,"Augusta Serepeca",female,30,0,0,113798,31.0,,C
+850,1,1,"Samuel L (Edwiga Grabowska) Goldenberg",female,0,0,0,null,0.0,null,null
+854,1,1,"Mary Conover Lines",female,16,0,1,PC 17592,39.4,D28,S
+857,1,1,"George Dennick (Mary Hitchcock) Wick",female,45,1,1,36928,164.8667,,S
+863,1,1,"Frederick Joel (Margaret Welles Barron) Swift",female,48,0,0,17466,25.9292,D17,S
+872,1,1,"Richard Leonard (Sallie Monypeny) Beckwith",female,47,1,1,11751,52.5542,D35,S
+880,1,1,"Thomas Jr (Lily Alexenia Wilson) Potter",female,56,0,1,11767,83.1583,C50,C
+888,1,1,"Margaret Edith Graham",female,19,0,0,112053,30.0,B42,S

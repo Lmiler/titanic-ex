@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -13,6 +14,7 @@ public class ManageScreen extends JPanel {
     private List<Passenger> filteredPassengers;
     private JLabel response;
     private JButton filterButton;
+    private int filterButtonPressCount = 0; // Track how many times filter button is pressed
 
     // Combo boxes for embarked and sex fields
     private JComboBox<String> embarkedComboBox;
@@ -160,9 +162,45 @@ public class ManageScreen extends JPanel {
         String responseText = "Total rows: " + totalCount +
                 " (" + survivedCount + " survived, " + notSurvivedCount + " didn't survive)";
         response.setText(responseText);
+
+        // Save filtered passengers to CSV
+        String fileName = generateFileName();
+        saveFilteredPassengersToCSV(fileName);
     }
 
-    private boolean matchesTextField(JTextField textField, Object value) {
+    private String generateFileName() {
+        // Generate file name based on the number of times filter button was pressed
+        int pressCount = ++filterButtonPressCount; // Increment and use
+        return pressCount + ".csv";
+    }
+
+    private void saveFilteredPassengersToCSV(String fileName) {
+        File outputFile = new File(fileName);
+        try (PrintWriter writer = new PrintWriter(outputFile)) {
+            // Write header
+            writer.println("PassengerId,Survived,PClass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked");
+
+            // Write filtered passengers
+            for (Passenger passenger : filteredPassengers) {
+                writer.println(passenger.getPassengerId() + "," +
+                        passenger.getSurvived() + "," +
+                        passenger.getPClass() + "," +
+                        "\"" + passenger.getFormattedName() + "\"," + // Quote name to handle commas
+                        passenger.getSex() + "," +
+                        passenger.getAge() + "," +
+                        passenger.getSibSp() + "," +
+                        passenger.getParch() + "," +
+                        passenger.getTicket() + "," +
+                        passenger.getFare() + "," +
+                        passenger.getCabin() + "," +
+                        passenger.getEmbarked());
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace(); // Handle this according to your application's needs
+        }
+    }
+
+    private <T> boolean matchesTextField(JTextField textField, T value) {
         String text = textField.getText().trim();
         if (text.isEmpty()) {
             return true; // No filter applied if text field is empty
@@ -198,7 +236,7 @@ public class ManageScreen extends JPanel {
     }
 
     private boolean matchesEmbarked(Passenger passenger, String selectedEmbarked) {
-        if (selectedEmbarked.isEmpty() || selectedEmbarked.equals("All")) {
+        if (selectedEmbarked.equals("All")) {
             return true; // No filter applied if embarked is not selected
         }
         if (passenger.getEmbarked() != null) {
@@ -208,7 +246,7 @@ public class ManageScreen extends JPanel {
     }
 
     private boolean matchesSex(Passenger passenger, String selectedSex) {
-        if (selectedSex.isEmpty() || selectedSex.equals("All")) {
+        if (selectedSex.equals("All")) {
             return true; // No filter applied if sex is not selected
         }
         return passenger.getSex().equalsIgnoreCase(selectedSex);
