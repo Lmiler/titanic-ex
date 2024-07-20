@@ -3,11 +3,8 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.Scanner;
-import java.util.stream.Collectors;
 
 public class ManageScreen extends JPanel {
     private JComboBox<String> survivedComboBox;
@@ -15,7 +12,8 @@ public class ManageScreen extends JPanel {
     private List<Passenger> filteredPassengers;
     private JLabel response;
     private JButton filterButton;
-    private int filterButtonPressCount = 0; // Track how many times filter button is pressed
+    private JButton statisticsButton;
+    private int filterButtonPressCount; // Track how many times filter button is pressed
 
     // Combo boxes for embarked and sex fields
     private JComboBox<String> embarkedComboBox;
@@ -33,6 +31,7 @@ public class ManageScreen extends JPanel {
     private JTextField cabinField;
 
     public ManageScreen(int x, int y, int width, int height) {
+        filterButtonPressCount = 0;
         File file = new File(Constants.PATH_TO_DATA_FILE);
         if (file.exists()) {
             this.setLayout(null);
@@ -56,6 +55,12 @@ public class ManageScreen extends JPanel {
             filterButton.setBounds(width - Constants.LABEL_WIDTH, y, Constants.COMBO_BOX_WIDTH, Constants.COMBO_BOX_HEIGHT);
             filterButton.setVisible(true);
             this.add(filterButton);
+
+            statisticsButton = new JButton("Create statistics");
+            statisticsButton.setBounds(filterButton.getX() - 35, filterButton.getY() + 40,
+                    filterButton.getWidth() + 55, filterButton.getHeight());
+            statisticsButton.setVisible(true);
+            this.add(statisticsButton);
 
             // Combo box for embarked field
             embarkedComboBox = new JComboBox<>(new String[]{"All", "S", "C", "Q"});
@@ -112,8 +117,12 @@ public class ManageScreen extends JPanel {
                 filterPassengersAndUpdateUI();
             });
 
-            this.survivedComboBox.addActionListener((e) -> {
-//                filterPassengersAndUpdateUI();
+//            this.survivedComboBox.addActionListener((e) -> {
+////                filterPassengersAndUpdateUI();
+//            });
+
+            statisticsButton.addActionListener(e -> {
+                generateSurvivalStatistics();
             });
 
         }
@@ -154,10 +163,10 @@ public class ManageScreen extends JPanel {
                 .filter(passenger -> matchesEmbarked(passenger, selectedEmbarked))
                 .filter(passenger -> matchesSex(passenger, selectedSex))
                 .filter(passenger -> matchesClass(passenger, selectedClass))
-                .collect(Collectors.toList()));
+                .toList());
 
         int totalCount = filteredPassengers.size();
-        int survivedCount = (int) filteredPassengers.stream().filter(passenger -> passenger.getSurvived() == 1).count();
+        int survivedCount = (int) filteredPassengers.stream().filter(Passenger::isSurvived).count();
         int notSurvivedCount = totalCount - survivedCount;
 
         String responseText = "Total rows: " + totalCount +
@@ -197,8 +206,7 @@ public class ManageScreen extends JPanel {
                         passenger.getCabin() + "," +
                         passenger.getEmbarked());
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace(); // Handle this according to your application's needs
+        } catch (FileNotFoundException ignored) {
         }
     }
 
@@ -259,16 +267,12 @@ public class ManageScreen extends JPanel {
             return true; // No filter applied if "All" is selected
         }
         int pClass = passenger.getPClass();
-        switch (selectedClass) {
-            case "1st":
-                return pClass == 1;
-            case "2nd":
-                return pClass == 2;
-            case "3rd":
-                return pClass == 3;
-            default:
-                return false;
-        }
+        return switch (selectedClass) {
+            case "1st" -> pClass == 1;
+            case "2nd" -> pClass == 2;
+            case "3rd" -> pClass == 3;
+            default -> false;
+        };
     }
 
     private int parseTextFieldToInt(JTextField textField) {
@@ -292,6 +296,186 @@ public class ManageScreen extends JPanel {
             return Double.parseDouble(text);
         } catch (NumberFormatException e) {
             return Double.NaN; // Invalid input, treat as no filter applied
+        }
+    }
+
+    // Method to calculate percentage of survivors based on passenger class
+    public Map<String, Double> calculateSurvivalPercentageByClass() {
+        Map<String, Double> percentages = new LinkedHashMap<>();
+        for (String option : Constants.PASSENGER_CLASS_OPTIONS) {
+            if (!option.equals("All")) {
+                List<Passenger> classPassengers = passengers.stream()
+                        .filter(passenger -> passenger.getClassAsString().equals(option))
+                        .toList();
+                long count = passengers.stream()
+                        .filter(passenger -> passenger.getClassAsString().equals(option))
+                        .filter(Passenger::isSurvived)
+                        .count();
+                double percentage = (count * 100.0) / classPassengers.size();
+                percentages.put(option, percentage);
+            }
+        }
+
+        return percentages;
+    }
+
+    // Method to calculate percentage of survivors based on sex
+    public Map<String, Double> calculateSurvivalPercentageBySex() {
+        Map<String, Double> percentages = new LinkedHashMap<>();
+        for (String sex : new String[]{"male", "female"}) {
+            List<Passenger> sexByPassenger = passengers.stream()
+                    .filter(passenger -> passenger.getSex().equals(sex))
+                    .toList();
+            long count = sexByPassenger.stream()
+                    .filter(Passenger::isSurvived)
+                    .count();
+            double percentage = (count * 100.0) / sexByPassenger.size();
+            percentages.put(sex, percentage);
+        }
+
+        return percentages;
+    }
+
+    // Method to calculate percentage of survivors based on age groups (e.g., child, adult, elderly)
+    public Map<String, Double> calculateSurvivalPercentageByAgeGroups() {
+        Map<String, Double> percentages = new LinkedHashMap<>();
+        List<Passenger> passengerChildCount = passengers.stream()
+                .filter(passenger -> passenger.getAge() >= 0 && passenger.getAge() <= 17)
+                .toList();
+        long childCount = passengerChildCount.stream()
+                .filter(Passenger::isSurvived)
+                .count();
+        List<Passenger> passengerAdultCount = passengers.stream()
+                .filter(passenger -> passenger.getAge() >= 18 && passenger.getAge() <= 64)
+                .toList();
+        long adultCount = passengerAdultCount.stream()
+                .filter(Passenger::isSurvived)
+                .count();
+        List<Passenger> passengerElderlyCount = passengers.stream()
+                .filter(passenger -> passenger.getAge() >= 65)
+                .toList();
+        long elderlyCount = passengerElderlyCount.stream()
+                .filter(Passenger::isSurvived)
+                .count();
+
+        percentages.put("Child (0 - 17)", (childCount * 100.0) / passengerChildCount.size());
+        percentages.put("Adult (18 - 64)", (adultCount * 100.0) / passengerAdultCount.size());
+        percentages.put("Elderly (65+)", (elderlyCount * 100.0) / passengerElderlyCount.size());
+
+        return percentages;
+    }
+
+    // Method to calculate percentage of survivors based on whether they had family members on board (Parch field)
+    public Map<String, Double> calculateSurvivalPercentageByParchAndSib() {
+        Map<String, Double> percentages = new LinkedHashMap<>();
+
+        List<Passenger> withFamilyPassengers = passengers.stream()
+                .filter(passenger -> passenger.getParch() + passenger.getSibSp() > 0)
+                .toList();
+        List<Passenger> withoutFamilyPassengers = passengers.stream()
+                .filter(passenger -> passenger.getParch() + passenger.getSibSp() == 0)
+                .toList();
+        long survivedWithFamily = withFamilyPassengers.stream()
+                .filter(Passenger::isSurvived)
+                .count();
+        long survivedWithoutFamily = withoutFamilyPassengers.stream()
+                .filter(Passenger::isSurvived)
+                .count();
+
+        percentages.put("With family", (survivedWithFamily * 100.0) / withFamilyPassengers.size());
+        percentages.put("Without family", (survivedWithoutFamily * 100.0) / withoutFamilyPassengers.size());
+
+        return percentages;
+    }
+
+    // Method to calculate percentage of survivors based on fare groups
+    public Map<String, Double> calculateSurvivalPercentageByFareGroups() {
+        Map<String, Double> percentages = new LinkedHashMap<>();
+
+        long lowFareCount = passengers.stream()
+                .filter(passenger -> passenger.getFare() < 50.0)
+                .count();
+        long mediumFareCount = passengers.stream()
+                .filter(passenger -> passenger.getFare() >= 50.0 && passenger.getFare() < 100.0)
+                .count();
+        long highFareCount = passengers.stream()
+                .filter(passenger -> passenger.getFare() >= 100.0)
+                .count();
+
+        percentages.put("Low Fare (0 - 49)", (lowFareCount * 100.0) );
+        percentages.put("Medium Fare (50 - 99)", (mediumFareCount * 100.0) );
+        percentages.put("High Fare (100+)", (highFareCount * 100.0) );
+
+        return percentages;
+    }
+
+    // Method to calculate percentage of survivors based on embarkation point
+    public Map<String, Double> calculateSurvivalPercentageByEmbarked() {
+        Map<String, Double> percentages = new LinkedHashMap<>();
+        int totalPassengers = passengers.size();
+
+        // Define embarkation points based on your dataset
+        // Example: S, C, Q, or any other points available in your data
+        // Implement logic to categorize passengers by embarkation point
+
+        // Example logic for specific embarkation points
+        long embarkedSCount = 0;
+        long embarkedCCount = 0;
+        long embarkedQCount = 0;
+
+        embarkedSCount = passengers.stream()
+                .filter(passenger -> passenger.getEmbarked().equalsIgnoreCase("S"))
+                .count();
+        embarkedCCount = passengers.stream()
+                .filter(passenger -> passenger.getEmbarked().equalsIgnoreCase("C"))
+                .count();
+        embarkedQCount = passengers.stream()
+                .filter(passenger -> passenger.getEmbarked().equalsIgnoreCase("Q"))
+                .count();
+
+
+        percentages.put("Embarked S", (embarkedSCount * 100.0) / totalPassengers);
+        percentages.put("Embarked C", (embarkedCCount * 100.0) / totalPassengers);
+        percentages.put("Embarked Q", (embarkedQCount * 100.0) / totalPassengers);
+
+        return percentages;
+    }
+
+    private void generateSurvivalStatistics() {
+        // Calculate survival percentages based on different criteria
+        Map<String, Double> survivalByClass = calculateSurvivalPercentageByClass();
+        Map<String, Double> survivalBySex = calculateSurvivalPercentageBySex();
+        Map<String, Double> survivalByAgeGroups = calculateSurvivalPercentageByAgeGroups();
+        Map<String, Double> survivalByParch = calculateSurvivalPercentageByParchAndSib();
+        Map<String, Double> survivalByFareGroups = calculateSurvivalPercentageByFareGroups();
+        Map<String, Double> survivalByEmbarked = calculateSurvivalPercentageByEmbarked();
+
+        // Prepare the content to write to the file
+        StringBuilder content = new StringBuilder();
+        content.append("Survival Statistics\n\n");
+        content.append("Survival by Passenger Class:\n");
+        survivalByClass.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
+        content.append("\nSurvival by Sex:\n");
+        survivalBySex.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
+        content.append("\nSurvival by Age Groups:\n");
+        survivalByAgeGroups.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
+        content.append("\nSurvival by Parch (Family Members):\n");
+        survivalByParch.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
+        content.append("\nSurvival by Fare Groups:\n");
+        survivalByFareGroups.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
+        content.append("\nSurvival by Embarked:\n");
+        survivalByEmbarked.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
+
+        // Save the content to Statistics.txt
+        saveStatisticsToFile(content.toString());
+    }
+
+    private void saveStatisticsToFile(String content) {
+        String fileName = "Statistics.txt";
+        File outputFile = new File(fileName);
+        try (PrintWriter writer = new PrintWriter(outputFile)) {
+            writer.println(content);
+        } catch (FileNotFoundException ignored) {
         }
     }
 

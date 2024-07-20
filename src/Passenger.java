@@ -42,7 +42,21 @@ public class Passenger {
         return survived;
     }
 
+    public boolean isSurvived() {
+        return survived == 1;
+    }
+
     public int getPClass() {
+        return pClass;
+    }
+
+    public String getClassAsString() {
+        String pClass = "";
+        switch (this.pClass) {
+            case 1 -> pClass = "1st";
+            case 2 -> pClass = "2nd";
+            case 3 -> pClass = "3rd";
+        }
         return pClass;
     }
 
@@ -79,7 +93,10 @@ public class Passenger {
     }
 
     public String getEmbarked() {
-        return embarked;
+        if (embarked != null) {
+            return embarked;
+        }
+        return "";
     }
 
     public String getFormattedName() {
