@@ -4,7 +4,7 @@ public class Passenger {
     private int pClass;
     private String name;
     private String sex;
-    private int age;
+    private float age;
     private int sibSp;
     private int parch;
     private String ticket;
@@ -16,21 +16,115 @@ public class Passenger {
 
     public Passenger(String info) {
         toDivide = info.split(",");
-        try {
-            passengerId = Integer.parseInt(toDivide[0]);
-            survived = Integer.parseInt(toDivide[1]);
-            pClass = Integer.parseInt(toDivide[2]);
-            name = toDivide[3] + toDivide[4];
-            sex = toDivide[5];
-            age = Integer.parseInt(toDivide[6]);
-            sibSp = Integer.parseInt(toDivide[7]);
-            parch = Integer.parseInt(toDivide[8]);
-            ticket = toDivide[9];
-            fare = Float.parseFloat(toDivide[10]);
-            cabin = toDivide[11];
-            embarked = toDivide[12];
-        } catch (Exception e) {
+        setPassengerId();
+        setSurvived();
+        setpClass();
+        setName();
+        setSex();
+        setAge();
+        setSibSp();
+        setParch();
+        setTicket();
+        setFare();
+        setCabin();
+        setEmbarked();
+    }
 
+    public void setPassengerId() {
+        if (toDivide[0] != null && !toDivide[0].isEmpty()) {
+            passengerId = Integer.parseInt(toDivide[0]);
+        } else {
+            passengerId = 0;
+        }
+    }
+
+    public void setSurvived() {
+        if (toDivide[1] != null && !toDivide[1].isEmpty()) {
+            survived = Integer.parseInt(toDivide[1]);
+        }
+    }
+
+    public void setpClass() {
+        if (toDivide[2] != null && !toDivide[2].isEmpty()) {
+            pClass = Integer.parseInt(toDivide[2]);
+        }
+    }
+
+    public void setName() {
+        if (toDivide[3] != null && !toDivide[3].isEmpty()) {
+            if (toDivide[4] != null && !toDivide[4].isEmpty()) {
+                name = toDivide[3] + " " + toDivide[4];
+            }
+        } else {
+            name = "";
+        }
+    }
+
+    public void setSex() {
+        if (toDivide[5] != null && !toDivide[5].isEmpty()) {
+            sex = toDivide[5];
+        } else {
+            sex = "";
+        }
+    }
+
+    public void setAge() {
+        if (toDivide[6] != null && !toDivide[6].isEmpty()) {
+            age = Float.parseFloat(toDivide[6]);
+        } else {
+            age = 0;
+        }
+    }
+
+    public void setSibSp() {
+        if (toDivide[7] != null && !toDivide[7].isEmpty()) {
+            sibSp = Integer.parseInt(toDivide[7]);
+        } else {
+            sibSp = 0;
+        }
+    }
+
+    public void setParch() {
+        if (toDivide[8] != null && !toDivide[8].isEmpty()) {
+            parch = Integer.parseInt(toDivide[8]);
+        } else {
+            parch = 0;
+        }
+    }
+
+    public void setTicket() {
+        if (toDivide[9] != null && !toDivide[9].isEmpty()) {
+            ticket = toDivide[9];
+        } else {
+            ticket = "";
+        }
+    }
+
+    public void setFare() {
+        if (toDivide[10] != null && !toDivide[10].isEmpty()) {
+            fare = Float.parseFloat(toDivide[10]);
+        } else {
+            fare = 0;
+        }
+    }
+
+    public void setCabin() {
+        if (toDivide[11] != null && !toDivide[11].isEmpty()) {
+            cabin = toDivide[11];
+        } else {
+            cabin = "";
+        }
+    }
+
+    public void setEmbarked() {
+        try {
+            if (toDivide[12] != null && !toDivide[12].isEmpty()) {
+                embarked = toDivide[12];
+            } else {
+                embarked = "";
+            }
+        } catch (Exception e) {
+            embarked = "";
         }
     }
 
@@ -68,7 +162,7 @@ public class Passenger {
         return sex;
     }
 
-    public int getAge() {
+    public float getAge() {
         return age;
     }
 
@@ -93,14 +187,11 @@ public class Passenger {
     }
 
     public String getEmbarked() {
-        if (embarked != null) {
-            return embarked;
-        }
-        return "";
+        return embarked;
     }
 
     public String getFormattedName() {
-        String formattedName = toDivide[4] + toDivide[3];
+        String formattedName = toDivide[4] + " " + toDivide[3];
         int dotIndex = formattedName.indexOf(".");
         formattedName = formattedName.substring(dotIndex + 1);
         formattedName = formattedName.replace("\"", "")
