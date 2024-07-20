@@ -31,29 +31,29 @@ public class Passenger {
     }
 
     public void setPassengerId() {
-        if (toDivide[0] != null && !toDivide[0].isEmpty()) {
-            passengerId = Integer.parseInt(toDivide[0]);
+        if (toDivide[Constants.ID_INDEX] != null && !toDivide[Constants.ID_INDEX].isEmpty()) {
+            passengerId = Integer.parseInt(toDivide[Constants.ID_INDEX]);
         } else {
             passengerId = 0;
         }
     }
 
     public void setSurvived() {
-        if (toDivide[1] != null && !toDivide[1].isEmpty()) {
+        if (toDivide[Constants.SURVIVED_INDEX] != null && !toDivide[Constants.SURVIVED_INDEX].isEmpty()) {
             survived = Integer.parseInt(toDivide[1]);
         }
     }
 
     public void setpClass() {
-        if (toDivide[2] != null && !toDivide[2].isEmpty()) {
-            pClass = Integer.parseInt(toDivide[2]);
+        if (toDivide[Constants.CLASS_INDEX] != null && !toDivide[Constants.CLASS_INDEX].isEmpty()) {
+            pClass = Integer.parseInt(toDivide[Constants.CLASS_INDEX]);
         }
     }
 
     public void setName() {
-        if (toDivide[3] != null && !toDivide[3].isEmpty()) {
-            if (toDivide[4] != null && !toDivide[4].isEmpty()) {
-                name = toDivide[3] + " " + toDivide[4];
+        if (toDivide[Constants.LAST_NAME_INDEX] != null && !toDivide[Constants.LAST_NAME_INDEX].isEmpty()) {
+            if (toDivide[Constants.FIRST_NAME_INDEX] != null && !toDivide[Constants.FIRST_NAME_INDEX].isEmpty()) {
+                name = toDivide[Constants.FIRST_NAME_INDEX] + " " + toDivide[Constants.LAST_NAME_INDEX];
             }
         } else {
             name = "";
@@ -61,56 +61,56 @@ public class Passenger {
     }
 
     public void setSex() {
-        if (toDivide[5] != null && !toDivide[5].isEmpty()) {
-            sex = toDivide[5];
+        if (toDivide[Constants.SEX_INDEX] != null && !toDivide[Constants.SEX_INDEX].isEmpty()) {
+            sex = toDivide[Constants.SEX_INDEX];
         } else {
             sex = "";
         }
     }
 
     public void setAge() {
-        if (toDivide[6] != null && !toDivide[6].isEmpty()) {
-            age = Float.parseFloat(toDivide[6]);
+        if (toDivide[Constants.AGE_INDEX] != null && !toDivide[Constants.AGE_INDEX].isEmpty()) {
+            age = Float.parseFloat(toDivide[Constants.AGE_INDEX]);
         } else {
             age = 0;
         }
     }
 
     public void setSibSp() {
-        if (toDivide[7] != null && !toDivide[7].isEmpty()) {
-            sibSp = Integer.parseInt(toDivide[7]);
+        if (toDivide[Constants.SIBSIP_INDEX] != null && !toDivide[Constants.SIBSIP_INDEX].isEmpty()) {
+            sibSp = Integer.parseInt(toDivide[Constants.SIBSIP_INDEX]);
         } else {
             sibSp = 0;
         }
     }
 
     public void setParch() {
-        if (toDivide[8] != null && !toDivide[8].isEmpty()) {
-            parch = Integer.parseInt(toDivide[8]);
+        if (toDivide[Constants.PARCH_INDEX] != null && !toDivide[Constants.PARCH_INDEX].isEmpty()) {
+            parch = Integer.parseInt(toDivide[Constants.PARCH_INDEX]);
         } else {
             parch = 0;
         }
     }
 
     public void setTicket() {
-        if (toDivide[9] != null && !toDivide[9].isEmpty()) {
-            ticket = toDivide[9];
+        if (toDivide[Constants.TICKET_INDEX] != null && !toDivide[Constants.TICKET_INDEX].isEmpty()) {
+            ticket = toDivide[Constants.TICKET_INDEX];
         } else {
             ticket = "";
         }
     }
 
     public void setFare() {
-        if (toDivide[10] != null && !toDivide[10].isEmpty()) {
-            fare = Float.parseFloat(toDivide[10]);
+        if (toDivide[Constants.FARE_INDEX] != null && !toDivide[Constants.FARE_INDEX].isEmpty()) {
+            fare = Float.parseFloat(toDivide[Constants.FARE_INDEX]);
         } else {
             fare = 0;
         }
     }
 
     public void setCabin() {
-        if (toDivide[11] != null && !toDivide[11].isEmpty()) {
-            cabin = toDivide[11];
+        if (toDivide[Constants.CABIN_INDEX] != null && !toDivide[Constants.CABIN_INDEX].isEmpty()) {
+            cabin = toDivide[Constants.CABIN_INDEX];
         } else {
             cabin = "";
         }
@@ -118,8 +118,8 @@ public class Passenger {
 
     public void setEmbarked() {
         try {
-            if (toDivide[12] != null && !toDivide[12].isEmpty()) {
-                embarked = toDivide[12];
+            if (toDivide[Constants.EMBARKED_INDEX] != null && !toDivide[Constants.EMBARKED_INDEX].isEmpty()) {
+                embarked = toDivide[Constants.EMBARKED_INDEX];
             } else {
                 embarked = "";
             }
@@ -191,7 +191,7 @@ public class Passenger {
     }
 
     public String getFormattedName() {
-        String formattedName = toDivide[4] + " " + toDivide[3];
+        String formattedName = toDivide[Constants.FIRST_NAME_INDEX] + " " + toDivide[Constants.LAST_NAME_INDEX];
         int dotIndex = formattedName.indexOf(".");
         formattedName = formattedName.substring(dotIndex + 1);
         formattedName = formattedName.replace("\"", "")

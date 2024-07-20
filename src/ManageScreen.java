@@ -1,5 +1,4 @@
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
@@ -11,16 +10,12 @@ public class ManageScreen extends JPanel {
     private List<Passenger> passengers;
     private List<Passenger> filteredPassengers;
     private JLabel response;
-    private JButton filterButton;
-    private JButton statisticsButton;
-    private int filterButtonPressCount; // Track how many times filter button is pressed
+    private int filterButtonPressCount;
 
-    // Combo boxes for embarked and sex fields
     private JComboBox<String> embarkedComboBox;
     private JComboBox<String> sexComboBox;
     private JComboBox<String> groupingComboBox;
 
-    // Text fields for other passenger attributes
     private JTextField nameField;
     private JTextField minIdField;
     private JTextField maxIdField;
@@ -52,19 +47,18 @@ public class ManageScreen extends JPanel {
             response.setVisible(true);
             this.add(response);
 
-            filterButton = new JButton("Filter");
+            JButton filterButton = new JButton("Filter");
             filterButton.setBounds(width - Constants.LABEL_WIDTH, y, Constants.COMBO_BOX_WIDTH, Constants.COMBO_BOX_HEIGHT);
             filterButton.setVisible(true);
             this.add(filterButton);
 
-            statisticsButton = new JButton("Create statistics");
+            JButton statisticsButton = new JButton("Create statistics");
             statisticsButton.setBounds(filterButton.getX() - 35, filterButton.getY() + 40,
                     filterButton.getWidth() + 55, filterButton.getHeight());
             statisticsButton.setVisible(true);
             this.add(statisticsButton);
 
-            // Combo box for embarked field
-            embarkedComboBox = new JComboBox<>(new String[]{"All", "S", "C", "Q"});
+            embarkedComboBox = new JComboBox<>(Constants.EMBARKED_OPTIONS);
             JLabel embarkedLabel = new JLabel("Embarked:");
             embarkedLabel.setBounds(survivedLabel.getX(), survivedLabel.getY() + survivedLabel.getHeight() + 10,
                     Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
@@ -74,7 +68,7 @@ public class ManageScreen extends JPanel {
             this.add(embarkedComboBox);
 
             // Combo box for sex field
-            sexComboBox = new JComboBox<>(new String[]{"All", "male", "female"});
+            sexComboBox = new JComboBox<>(Constants.SEX_OPTIONS);
             JLabel sexLabel = new JLabel("Sex:");
             sexLabel.setBounds(survivedLabel.getX(), embarkedLabel.getY() + embarkedLabel.getHeight() + 10,
                     Constants.LABEL_WIDTH, Constants.LABEL_HEIGHT);
@@ -83,8 +77,7 @@ public class ManageScreen extends JPanel {
                     Constants.COMBO_BOX_WIDTH, Constants.COMBO_BOX_HEIGHT);
             this.add(sexComboBox);
 
-            groupingComboBox = new JComboBox<>(new String[]{"None", "Passenger Class", "Survived", "Sex",
-                    "Age Groups", "Parch & SibSp", "Fare Groups", "Embarked"});
+            groupingComboBox = new JComboBox<>(Constants.GROUPING_OPTIONS);
             JLabel groupingLabel = new JLabel("Data grouping:");
             groupingLabel.setBounds(survivedLabel.getX() + 235, survivedLabel.getY(), survivedLabel.getWidth()
                     , survivedLabel.getHeight());
@@ -93,31 +86,38 @@ public class ManageScreen extends JPanel {
                     survivedComboBox.getWidth() + 30, survivedComboBox.getHeight());
             this.add(groupingComboBox);
 
-
-            // Text fields for other passenger attributes
             int textFieldX = survivedLabel.getX();
             int textFieldY = sexComboBox.getY() + sexComboBox.getHeight() + 10;
             int textFieldWidth = Constants.LABEL_WIDTH + Constants.COMBO_BOX_WIDTH;
             int textFieldHeight = Constants.COMBO_BOX_HEIGHT;
 
-            minIdField = createTextField("ID Min:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            maxIdField = createTextField("ID Max:", minIdField.getX() + minIdField.getWidth() + 20, textFieldY,
+            minIdField = createTextField("ID Min:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
                     textFieldWidth, textFieldHeight);
-            nameField = createTextField("Name:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            sibSpField = createTextField("SibSp:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            parchField = createTextField("Parch:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            ticketField = createTextField("Ticket:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            minFareField = createTextField("Fare Min:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
-            maxFareField = createTextField("Fare Max:", minFareField.getX() + minFareField.getWidth() + 20,
+            maxIdField = createTextField("ID Max:",
+                    minIdField.getX() + minIdField.getWidth() + Constants.X_DIFFERENCE,
                     textFieldY, textFieldWidth, textFieldHeight);
-            cabinField = createTextField("Cabin:", textFieldX, textFieldY += 40, textFieldWidth, textFieldHeight);
+            nameField = createTextField("Name:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
+                    textFieldWidth, textFieldHeight);
+            sibSpField = createTextField("SibSp:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
+                    textFieldWidth, textFieldHeight);
+            parchField = createTextField("Parch:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
+                    textFieldWidth, textFieldHeight);
+            ticketField = createTextField("Ticket:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
+                    textFieldWidth, textFieldHeight);
+            minFareField = createTextField("Fare Min:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
+                    textFieldWidth, textFieldHeight);
+            maxFareField = createTextField("Fare Max:",
+                    minFareField.getX() + minFareField.getWidth() + Constants.X_DIFFERENCE,
+                    textFieldY, textFieldWidth, textFieldHeight);
+            cabinField = createTextField("Cabin:", textFieldX, textFieldY += Constants.LABEL_DISTANCE,
+                    textFieldWidth, textFieldHeight);
 
             passengers = new ArrayList<>();
             filteredPassengers = new ArrayList<>();
 
             try {
                 Scanner scanner = new Scanner(file);
-                scanner.nextLine(); // Skip header line
+                scanner.nextLine();
                 while (scanner.hasNextLine()) {
                     String line = scanner.nextLine();
                     Passenger passenger = new Passenger(line);
@@ -153,7 +153,7 @@ public class ManageScreen extends JPanel {
 
     private void printMap(Map<String, Double> data) {
         List<Map.Entry<String, Double>> entryList = new ArrayList<>(data.entrySet());
-        Collections.sort(entryList, new Comparator<Map.Entry<String, Double>>() {
+        entryList.sort(new Comparator<Map.Entry<String, Double>>() {
             @Override
             public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
                 return Double.compare(o2.getValue(), o1.getValue());
@@ -213,14 +213,12 @@ public class ManageScreen extends JPanel {
                 " (" + survivedCount + " survived, " + notSurvivedCount + " didn't survive)";
         response.setText(responseText);
 
-        // Save filtered passengers to CSV
         String fileName = generateFileName();
         saveFilteredPassengersToCSV(fileName);
     }
 
     private String generateFileName() {
-        // Generate file name based on the number of times filter button was pressed
-        int pressCount = ++filterButtonPressCount; // Increment and use
+        int pressCount = ++filterButtonPressCount;
         return pressCount + ".csv";
     }
 
@@ -236,7 +234,7 @@ public class ManageScreen extends JPanel {
                 writer.println(passenger.getPassengerId() + "," +
                         passenger.getSurvived() + "," +
                         passenger.getPClass() + "," +
-                        "\"" + passenger.getFormattedName() + "\"," + // Quote name to handle commas
+                        "\"" + passenger.getFormattedName() + "\"," +
                         passenger.getSex() + "," +
                         passenger.getAge() + "," +
                         passenger.getSibSp() + "," +
@@ -253,15 +251,14 @@ public class ManageScreen extends JPanel {
     private <T> boolean matchesTextField(JTextField textField, T value) {
         String text = textField.getText().trim();
         if (text.isEmpty()) {
-            return true; // No filter applied if text field is empty
+            return true;
         }
-        // Check if the value string representation contains the text
         return String.valueOf(value).toLowerCase().contains(text.toLowerCase());
     }
 
     private boolean matchesIdRange(int id, int minId, int maxId) {
         if (minId == Integer.MIN_VALUE && maxId == Integer.MIN_VALUE) {
-            return true; // No filter applied if both fields are empty
+            return true;
         }
         if (minId == Integer.MIN_VALUE) {
             return id <= maxId;
@@ -274,7 +271,7 @@ public class ManageScreen extends JPanel {
 
     private boolean matchesFareRange(double fare, double minFare, double maxFare) {
         if (Double.isNaN(minFare) && Double.isNaN(maxFare)) {
-            return true; // No filter applied if both fields are empty
+            return true;
         }
         if (Double.isNaN(minFare)) {
             return fare <= maxFare;
@@ -287,7 +284,7 @@ public class ManageScreen extends JPanel {
 
     private boolean matchesEmbarked(Passenger passenger, String selectedEmbarked) {
         if (selectedEmbarked.equals("All")) {
-            return true; // No filter applied if embarked is not selected
+            return true;
         }
         if (passenger.getEmbarked() != null) {
             return passenger.getEmbarked().equalsIgnoreCase(selectedEmbarked);
@@ -297,14 +294,14 @@ public class ManageScreen extends JPanel {
 
     private boolean matchesSex(Passenger passenger, String selectedSex) {
         if (selectedSex.equals("All")) {
-            return true; // No filter applied if sex is not selected
+            return true;
         }
         return passenger.getSex().equalsIgnoreCase(selectedSex);
     }
 
     private boolean matchesClass(Passenger passenger, String selectedClass) {
         if (selectedClass.equals("All")) {
-            return true; // No filter applied if "All" is selected
+            return true;
         }
         int pClass = passenger.getPClass();
         return switch (selectedClass) {
@@ -318,28 +315,27 @@ public class ManageScreen extends JPanel {
     private int parseTextFieldToInt(JTextField textField) {
         String text = textField.getText().trim();
         if (text.isEmpty()) {
-            return Integer.MIN_VALUE; // Indicates no filter applied
+            return Integer.MIN_VALUE;
         }
         try {
             return Integer.parseInt(text);
         } catch (NumberFormatException e) {
-            return Integer.MIN_VALUE; // Invalid input, treat as no filter applied
+            return Integer.MIN_VALUE;
         }
     }
 
     private double parseTextFieldToDouble(JTextField textField) {
         String text = textField.getText().trim();
         if (text.isEmpty()) {
-            return Double.NaN; // Indicates no filter applied
+            return Double.NaN;
         }
         try {
             return Double.parseDouble(text);
         } catch (NumberFormatException e) {
-            return Double.NaN; // Invalid input, treat as no filter applied
+            return Double.NaN;
         }
     }
 
-    // Method to calculate percentage of survivors based on passenger class
     public Map<String, Double> calculateSurvivalPercentageByClass() {
         Map<String, Double> percentages = new LinkedHashMap<>();
         for (String option : Constants.PASSENGER_CLASS_OPTIONS) {
@@ -351,7 +347,7 @@ public class ManageScreen extends JPanel {
                         .filter(passenger -> passenger.getClassAsString().equals(option))
                         .filter(Passenger::isSurvived)
                         .count();
-                double percentage = (count * 100.0) / classPassengers.size();
+                double percentage = (count * Constants.HUNDRED) / classPassengers.size();
                 percentages.put(option, percentage);
             }
         }
@@ -359,7 +355,6 @@ public class ManageScreen extends JPanel {
         return percentages;
     }
 
-    // Method to calculate percentage of survivors based on sex
     public Map<String, Double> calculateSurvivalPercentageBySex() {
         Map<String, Double> percentages = new LinkedHashMap<>();
         for (String sex : new String[]{"male", "female"}) {
@@ -369,43 +364,42 @@ public class ManageScreen extends JPanel {
             long count = sexByPassenger.stream()
                     .filter(Passenger::isSurvived)
                     .count();
-            double percentage = (count * 100.0) / sexByPassenger.size();
+            double percentage = (count * Constants.HUNDRED) / sexByPassenger.size();
             percentages.put(sex, percentage);
         }
 
         return percentages;
     }
 
-    // Method to calculate percentage of survivors based on age groups (e.g., child, adult, elderly)
     public Map<String, Double> calculateSurvivalPercentageByAgeGroups() {
         Map<String, Double> percentages = new LinkedHashMap<>();
         List<Passenger> passengerChildCount = passengers.stream()
-                .filter(passenger -> passenger.getAge() >= 0 && passenger.getAge() <= 17)
+                .filter(passenger -> passenger.getAge() <= Constants.CHILD)
                 .toList();
         long childCount = passengerChildCount.stream()
                 .filter(Passenger::isSurvived)
                 .count();
         List<Passenger> passengerAdultCount = passengers.stream()
-                .filter(passenger -> passenger.getAge() >= 18 && passenger.getAge() <= 64)
+                .filter(passenger -> passenger.getAge() >= Constants.ADULT_MIN &&
+                        passenger.getAge() <= Constants.ADULT_MAX)
                 .toList();
         long adultCount = passengerAdultCount.stream()
                 .filter(Passenger::isSurvived)
                 .count();
         List<Passenger> passengerElderlyCount = passengers.stream()
-                .filter(passenger -> passenger.getAge() >= 65)
+                .filter(passenger -> passenger.getAge() >= Constants.ELDER)
                 .toList();
         long elderlyCount = passengerElderlyCount.stream()
                 .filter(Passenger::isSurvived)
                 .count();
 
-        percentages.put("Child (0 - 17)", (childCount * 100.0) / passengerChildCount.size());
-        percentages.put("Adult (18 - 64)", (adultCount * 100.0) / passengerAdultCount.size());
-        percentages.put("Elderly (65+)", (elderlyCount * 100.0) / passengerElderlyCount.size());
+        percentages.put("Child (0 - 17)", (childCount * Constants.HUNDRED) / passengerChildCount.size());
+        percentages.put("Adult (18 - 64)", (adultCount * Constants.HUNDRED) / passengerAdultCount.size());
+        percentages.put("Elderly (65+)", (elderlyCount * Constants.HUNDRED) / passengerElderlyCount.size());
 
         return percentages;
     }
 
-    // Method to calculate percentage of survivors based on whether they had family members on board (Parch field)
     public Map<String, Double> calculateSurvivalPercentageByParchAndSib() {
         Map<String, Double> percentages = new LinkedHashMap<>();
 
@@ -422,41 +416,40 @@ public class ManageScreen extends JPanel {
                 .filter(Passenger::isSurvived)
                 .count();
 
-        percentages.put("With family", (survivedWithFamily * 100.0) / withFamilyPassengers.size());
-        percentages.put("Without family", (survivedWithoutFamily * 100.0) / withoutFamilyPassengers.size());
+        percentages.put("With family", (survivedWithFamily * Constants.HUNDRED) / withFamilyPassengers.size());
+        percentages.put("Without family", (survivedWithoutFamily * Constants.HUNDRED) / withoutFamilyPassengers.size());
 
         return percentages;
     }
 
-    // Method to calculate percentage of survivors based on fare groups
     public Map<String, Double> calculateSurvivalPercentageByFareGroups() {
         Map<String, Double> percentages = new LinkedHashMap<>();
         List<Passenger> passengerLowFareCount = passengers.stream()
-                .filter(passenger -> passenger.getFare() < 50.0)
+                .filter(passenger -> passenger.getFare() <= Constants.LOW_FARE)
                 .toList();
         long lowFareCount = passengerLowFareCount.stream()
                 .filter(Passenger::isSurvived)
                 .count();
         List<Passenger> passengerMediumFareCount = passengers.stream()
-                .filter(passenger -> passenger.getFare() >= 50.0 && passenger.getFare() < 100.0)
+                .filter(passenger -> passenger.getFare() >= Constants.MID_FARE_MIN &&
+                        passenger.getFare() <= Constants.MID_FARE_MAX)
                 .toList();
         long mediumFareCount = passengerMediumFareCount.stream()
                 .filter(Passenger::isSurvived)
                 .count();
         List<Passenger> passengerHighFareCount = passengers.stream()
-                .filter(passenger -> passenger.getFare() >= 100.0)
+                .filter(passenger -> passenger.getFare() >= Constants.HIGH_FARE)
                 .toList();
         long highFareCount = passengerHighFareCount.stream()
                 .filter(Passenger::isSurvived)
                 .count();
-        percentages.put("Low Fare (0 - 49)", (lowFareCount * 100.0) / passengerLowFareCount.size());
-        percentages.put("Medium Fare (50 - 99)", (mediumFareCount * 100.0) / passengerMediumFareCount.size());
-        percentages.put("High Fare (100+)", (highFareCount * 100.0) / passengerHighFareCount.size());
+        percentages.put("Low Fare (0 - 49)", (lowFareCount * Constants.HUNDRED) / passengerLowFareCount.size());
+        percentages.put("Medium Fare (50 - 99)", (mediumFareCount * Constants.HUNDRED) / passengerMediumFareCount.size());
+        percentages.put("High Fare (100+)", (highFareCount * Constants.HUNDRED) / passengerHighFareCount.size());
 
         return percentages;
     }
 
-    // Method to calculate percentage of survivors based on embarkation point
     public Map<String, Double> calculateSurvivalPercentageByEmbarked() {
         Map<String, Double> percentages = new LinkedHashMap<>();
         List<Passenger> passengerSClass = passengers.stream()
@@ -478,9 +471,9 @@ public class ManageScreen extends JPanel {
                 .filter(Passenger::isSurvived)
                 .count();
 
-        percentages.put("Embarked S", (embarkedSCount * 100.0) / passengerSClass.size());
-        percentages.put("Embarked C", (embarkedCCount * 100.0) / passengerCClass.size());
-        percentages.put("Embarked Q", (embarkedQCount * 100.0) / passengerQClass.size());
+        percentages.put("Embarked S", (embarkedSCount * Constants.HUNDRED) / passengerSClass.size());
+        percentages.put("Embarked C", (embarkedCCount * Constants.HUNDRED) / passengerCClass.size());
+        percentages.put("Embarked Q", (embarkedQCount * Constants.HUNDRED) / passengerQClass.size());
 
         return percentages;
     }
@@ -494,7 +487,6 @@ public class ManageScreen extends JPanel {
         Map<String, Double> survivalByFareGroups = calculateSurvivalPercentageByFareGroups();
         Map<String, Double> survivalByEmbarked = calculateSurvivalPercentageByEmbarked();
 
-        // Prepare the content to write to the file
         StringBuilder content = new StringBuilder();
         content.append("Survival Statistics\n\n");
         content.append("Survival by Passenger Class:\n");
@@ -503,14 +495,13 @@ public class ManageScreen extends JPanel {
         survivalBySex.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
         content.append("\nSurvival by Age Groups:\n");
         survivalByAgeGroups.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
-        content.append("\nSurvival by Parch (Family Members):\n");
+        content.append("\nSurvival by Family:\n");
         survivalByParch.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
         content.append("\nSurvival by Fare Groups:\n");
         survivalByFareGroups.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
         content.append("\nSurvival by Embarked:\n");
         survivalByEmbarked.forEach((key, value) -> content.append(key + ": " + String.format("%.2f", value) + "%\n"));
 
-        // Save the content to Statistics.txt
         saveStatisticsToFile(content.toString());
     }
 
@@ -531,7 +522,7 @@ public class ManageScreen extends JPanel {
                 List<Passenger> classPassengers = passengers.stream()
                         .filter(passenger -> passenger.getClassAsString().equals(option))
                         .toList();
-                double percentage = (classPassengers.size() * 100.0) / totalPassengers;
+                double percentage = (classPassengers.size() * Constants.HUNDRED) / totalPassengers;
                 percentages.put(option, percentage);
             }
         }
@@ -546,8 +537,8 @@ public class ManageScreen extends JPanel {
                 .filter(Passenger::isSurvived)
                 .count();
         long notSurvived = totalPassengers - survived;
-        percentages.put("Survived: ", (survived * 100.0) / totalPassengers);
-        percentages.put("Not survived: ", (notSurvived * 100.0) / totalPassengers);
+        percentages.put("Survived: ", (survived * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Not survived: ", (notSurvived * Constants.HUNDRED) / totalPassengers);
         return percentages;
     }
 
@@ -558,7 +549,7 @@ public class ManageScreen extends JPanel {
             List<Passenger> sexByPassenger = passengers.stream()
                     .filter(passenger -> passenger.getSex().equals(sex))
                     .toList();
-            double percentage = (sexByPassenger.size() * 100.0) / totalPassengers;
+            double percentage = (sexByPassenger.size() * Constants.HUNDRED) / totalPassengers;
             percentages.put(sex, percentage);
         }
 
@@ -570,20 +561,21 @@ public class ManageScreen extends JPanel {
         int totalPassengers = passengers.size();
 
         long childCount = passengers.stream()
-                .filter(passenger -> passenger.getAge() >= 0 && passenger.getAge() <= 17)
+                .filter(passenger -> passenger.getAge() <= Constants.CHILD)
                 .count();
 
         long adultCount = passengers.stream()
-                .filter(passenger -> passenger.getAge() >= 18 && passenger.getAge() <= 64)
+                .filter(passenger -> passenger.getAge() >= Constants.ADULT_MIN &&
+                        passenger.getAge() <= Constants.ADULT_MAX)
                 .count();
 
         long elderlyCount = passengers.stream()
-                .filter(passenger -> passenger.getAge() >= 65)
+                .filter(passenger -> passenger.getAge() >= Constants.ELDER)
                 .count();
 
-        percentages.put("Child (0 - 17)", (childCount * 100.0) / totalPassengers);
-        percentages.put("Adult (18 - 64)", (adultCount * 100.0) / totalPassengers);
-        percentages.put("Elderly (65+)", (elderlyCount * 100.0) / totalPassengers);
+        percentages.put("Child (0 - 17)", (childCount * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Adult (18 - 64)", (adultCount * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Elderly (65+)", (elderlyCount * Constants.HUNDRED) / totalPassengers);
 
         return percentages;
     }
@@ -599,8 +591,8 @@ public class ManageScreen extends JPanel {
                 .filter(passenger -> passenger.getSibSp() + passenger.getParch() == 0)
                 .count();
 
-        percentages.put("With family", (withFamily * 100.0) / totalPassengers);
-        percentages.put("Without family", (withoutFamily * 100.0) / totalPassengers);
+        percentages.put("With family", (withFamily * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Without family", (withoutFamily * Constants.HUNDRED) / totalPassengers);
 
         return percentages;
     }
@@ -609,17 +601,18 @@ public class ManageScreen extends JPanel {
         Map<String, Double> percentages = new LinkedHashMap<>();
         int totalPassengers = passengers.size();
         long lowFareCount = passengers.stream()
-                .filter(passenger -> passenger.getFare() < 50.0)
+                .filter(passenger -> passenger.getFare() <= Constants.LOW_FARE)
                 .count();
         long mediumFareCount = passengers.stream()
-                .filter(passenger -> passenger.getFare() >= 50.0 && passenger.getFare() < 100.0)
+                .filter(passenger -> passenger.getFare() >= Constants.MID_FARE_MIN &&
+                        passenger.getFare() <= Constants.MID_FARE_MAX)
                 .count();
         long highFareCount = passengers.stream()
-                .filter(passenger -> passenger.getFare() >= 100.0)
+                .filter(passenger -> passenger.getFare() >= Constants.HIGH_FARE)
                 .count();
-        percentages.put("Low Fare (0 - 49)", (lowFareCount * 100.0) / totalPassengers);
-        percentages.put("Medium Fare (50 - 99)", (mediumFareCount * 100.0) / totalPassengers);
-        percentages.put("High Fare (100+)", (highFareCount * 100.0) / totalPassengers);
+        percentages.put("Low Fare (0 - 49)", (lowFareCount * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Medium Fare (50 - 99)", (mediumFareCount * Constants.HUNDRED) / totalPassengers);
+        percentages.put("High Fare (100+)", (highFareCount * Constants.HUNDRED) / totalPassengers);
 
         return percentages;
     }
@@ -637,9 +630,9 @@ public class ManageScreen extends JPanel {
                 .filter(passenger -> passenger.getEmbarked().equals("Q"))
                 .count();
 
-        percentages.put("Embarked S", (embarkedSCount * 100.0) / totalPassengers);
-        percentages.put("Embarked C", (embarkedCCount * 100.0) / totalPassengers);
-        percentages.put("Embarked Q", (embarkedQCount * 100.0) / totalPassengers);
+        percentages.put("Embarked S", (embarkedSCount * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Embarked C", (embarkedCCount * Constants.HUNDRED) / totalPassengers);
+        percentages.put("Embarked Q", (embarkedQCount * Constants.HUNDRED) / totalPassengers);
 
         return percentages;
     }
